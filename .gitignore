@@ -74,3 +74,8 @@ jspm_packages/
 .idea/
 /*.js
 /*.js.map
+
+/test/
+
+junit.xml
+/reports/

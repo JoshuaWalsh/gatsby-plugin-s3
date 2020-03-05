@@ -6,6 +6,7 @@
     "bin": "bin.js",
     "scripts": {
         "test": "jest",
+        "test:e2e": "jest src/test/e2e.test.ts --ci --runInBand --reporters=default --reporters=jest-junit",
         "prepublish": "npm run build",
         "build": "tsc --project .",
         "typecheck": "tsc --project . --noEmit",
@@ -44,7 +45,9 @@
         "@types/ora": "^3.0.0",
         "@types/stream-to-promise": "^2.2.0",
         "@types/yargs": "^12.0.2",
+        "@types/dotenv": "^6.1.1",
         "babel-jest": "^23.6.0",
+        "dotenv": "^6.1.1",
         "es6-promisify": "^6.0.1",
         "eslint": "^6.8.0",
         "eslint-config-oberon": "^2.0.0",
@@ -61,7 +64,8 @@
         "snyk": "^1.198.0",
         "tslint": "^5.18.0",
         "tslint-config-oberon": "^1.1.1",
-        "typescript": "^3.8.3"
+        "typescript": "^3.8.3",
+        "jest-junit": "^6.4.0"
     },
     "peerDependencies": {
         "gatsby": ">2.0.0-alpha"
@@ -73,6 +77,8 @@
     },
     "homepage": "https://github.com/jariz/gatsby-plugin-s3#readme",
     "dependencies": {
+        "@types/async": "^2.4.1",
+        "@types/node": "^12.0.2",
         "@babel/polyfill": "^7.8.3",
         "async": "^2.6.2",
         "aws-sdk": "^2.382.0",
@@ -113,6 +119,10 @@
         },
         "setupFiles": [
             "@babel/polyfill"
+        ],
+        "reporters": [
+            "default",
+            "jest-junit"
         ]
     },
     "snyk": true

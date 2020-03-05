@@ -1,22 +1,23 @@
 module.exports = {
     siteMetadata: {
         title: 'Gatsby Default Starter',
-        description: 'Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.',
-        author: '@gatsbyjs'
+        description:
+            'Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.',
+        author: '@gatsbyjs',
     },
     plugins: [
         {
             resolve: `gatsby-plugin-s3`,
             options: {
-                bucketName: 'gatsby-plugin-s3-' + process.env.AWS_STAGE,
+                bucketName: process.env.TARGET_BUCKET,
                 region: 'eu-west-1',
-                generateRedirectObjectsForPermanentRedirects: true
+                generateRedirectObjectsForPermanentRedirects: !process.env.LEGACY_REDIRECTS,
             },
         },
         {
             resolve: `gatsby-plugin-create-client-paths`,
             options: { prefixes: [`/client-only/*`] },
         },
-        'gatsby-plugin-offline'
-    ]
+        'gatsby-plugin-offline',
+    ],
 };

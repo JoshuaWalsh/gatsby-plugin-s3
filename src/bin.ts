@@ -104,7 +104,7 @@ const createSafeS3Key = (key: string): string => {
     return key;
 };
 
-const deploy = async ({ yes, bucket }: { yes: boolean; bucket: string }) => {
+const deploy = async ({ yes, bucket, userAgent }: { yes: boolean; bucket: string; userAgent: string }) => {
     const spinner = ora({ text: 'Retrieving bucket info...', color: 'magenta' }).start();
     let dontPrompt = yes;
 
@@ -126,6 +126,10 @@ const deploy = async ({ yes, bucket }: { yes: boolean; bucket: string }) => {
         const s3 = new S3({
             region: config.region,
             endpoint: config.customAwsEndpointHostname,
+            customUserAgent: userAgent || '',
+            httpOptions: {
+                proxy: process.env.HTTPS_PROXY,
+            },
         });
 
         const { exists, region } = await getBucketInfo(config, s3);
@@ -174,7 +178,9 @@ const deploy = async ({ yes, bucket }: { yes: boolean; bucket: string }) => {
                     LocationConstraint: config.region,
                 };
             }
+            console.log('Creating bucket', config.bucketName);
             await s3.createBucket(createParams).promise();
+            console.log('Bucket created');
         }
 
         if (config.enableS3StaticWebsiteHosting) {
@@ -194,18 +200,23 @@ const deploy = async ({ yes, bucket }: { yes: boolean; bucket: string }) => {
                 websiteConfig.WebsiteConfiguration.RoutingRules = routingRules;
             }
 
+            console.log('Updating bucket website', config.bucketName);
             await s3.putBucketWebsite(websiteConfig).promise();
+            console.log('Bucket website updated');
         }
 
         spinner.text = 'Listing objects...';
         spinner.color = 'green';
+        console.log('Listing objects');
         const objects = await listAllObjects(s3, config.bucketName);
+        console.log('Objects listed');
 
         spinner.color = 'cyan';
         spinner.text = 'Syncing...';
         const publicDir = resolve('./public');
         const stream = klaw(publicDir);
         const isKeyInUse: { [objectKey: string]: boolean } = {};
+        console.log('Starting upload');
 
         stream.on('data', ({ path, stats }) => {
             if (!stats.isFile()) {
@@ -308,6 +319,8 @@ const deploy = async ({ yes, bucket }: { yes: boolean; bucket: string }) => {
         await streamToPromise(stream as Readable);
         await promisifiedParallelLimit(uploadQueue, 20);
 
+        console.log('Upload complete');
+
         if (config.removeNonexistentObjects) {
             const objectsToRemove = objects
                 .map(obj => ({ Key: obj.Key as string }))
@@ -364,6 +377,9 @@ cli.command(
         args.option('bucket', {
             alias: 'b',
             describe: 'Bucket name (if you wish to override default bucket name)',
+        });
+        args.option('userAgent', {
+            describe: 'Allow appending custom text to the User Agent string (Used in automated tests)',
         });
     },
     deploy

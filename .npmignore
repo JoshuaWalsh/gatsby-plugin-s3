@@ -2,4 +2,6 @@ examples/
 recipes/
 src/
 typings/
+test/
 .idea/
+.env
