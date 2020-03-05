@@ -12,7 +12,8 @@
         "typecheck": "tsc --project . --noEmit",
         "develop": "babel --extensions=\".ts\" --out-dir=. src/ -w",
         "snyk-protect": "snyk protect",
-        "prepare": "npm run snyk-protect"
+        "prepare": "npm run snyk-protect",
+        "precommit": "npm run typecheck && lint-staged"
     },
     "repository": {
         "type": "git",
