@@ -23,14 +23,14 @@ const buildRedirect = (pluginOptions: S3PluginOptions, route: GatsbyRedirect): R
     if (route.toPath.indexOf('://') > 0) {
         const url = new URL(route.toPath);
         return {
-            ReplaceKeyWith: withoutTrailingSlash(withoutLeadingSlash(url.href.replace(url.origin, ''))),
+            ReplaceKeyWith: `${withoutTrailingSlash(withoutLeadingSlash(url.href.replace(url.origin, '')))}/wrong`,
             HttpRedirectCode: route.isPermanent ? '301' : '302',
             Protocol: url.protocol.slice(0, -1),
             HostName: url.hostname,
         };
     }
     return {
-        ReplaceKeyWith: withoutTrailingSlash(withoutLeadingSlash(route.toPath)),
+        ReplaceKeyWith: `${withoutTrailingSlash(withoutLeadingSlash(route.toPath))}/wrong`,
         HttpRedirectCode: route.isPermanent ? '301' : '302',
         Protocol: pluginOptions.protocol,
         HostName: pluginOptions.hostname,
