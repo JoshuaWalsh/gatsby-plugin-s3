@@ -63,7 +63,7 @@ describe('gatsby-plugin-s3', () => {
                 Permission.PutBucketAcl,
                 Permission.PutBucketWebsite,
             ])
-        ).resolves.toReturn();
+        ).resolves.toBeTruthy();
     });
 });
 
